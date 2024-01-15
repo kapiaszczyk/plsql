@@ -14,43 +14,43 @@ CREATE OR REPLACE PACKAGE traveler_assistance_package AS
     );
 
     -- Definition of a record for the second procedure
-    TYPE country_reg_curr IS RECORD (
+    TYPE country_reg_curr_info IS RECORD (
         country_name countries.country_name %TYPE,
         region regions.region_name %TYPE,
         currency currencies.currency_name %TYPE
     );
 
     -- Definition of a record for the array of records
-    TYPE country_language_info IS RECORD (
+    TYPE country_lang_info IS RECORD (
         country_name countries.country_name %TYPE,
         language_name languages.language_name %TYPE,
         official_language spoken_languages.official %TYPE
     );
 
     -- Defining an array type for the third and fourth procedure
-    TYPE country_reg_curr_table IS TABLE OF country_reg_curr INDEX BY PLS_INTEGER;
+    TYPE country_reg_curr_arr IS TABLE OF country_reg_curr_info INDEX BY PLS_INTEGER;
 
     -- Defining an array type for the fifth and sixth procedure
-    TYPE country_languages_arr IS TABLE OF country_language_info INDEX BY PLS_INTEGER;
+    TYPE country_lang_arr IS TABLE OF country_lang_info INDEX BY PLS_INTEGER;
 
     -- Declaring the procedures
     PROCEDURE country_demographics (in_country_name VARCHAR2);
     PROCEDURE find_region_and_currency(
         in_country_name IN VARCHAR2,
-        out_country_reg_curr OUT country_reg_curr
+        out_country_reg_curr OUT country_reg_curr_info
     );
     PROCEDURE countries_in_region(
         in_region_name IN VARCHAR2,
-        out_country_info OUT country_reg_curr_table
+        out_country_info OUT country_reg_curr_arr
     );
     PROCEDURE print_region_array(
-        in_country_reg_curr_table country_reg_curr_table
+        in_country_reg_curr_arr country_reg_curr_arr
     );
     PROCEDURE country_languages(
         in_country_name IN VARCHAR2,
-        out_country_langs OUT country_languages_arr
+        out_country_langs OUT country_lang_arr
     );
-    PROCEDURE print_language_array(country_languages country_languages_arr);
+    PROCEDURE print_language_array(country_languages country_lang_arr);
 END traveler_assistance_package;
 / 
 
@@ -88,7 +88,7 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     -- Procedure no. 2
     PROCEDURE find_region_and_currency(
         in_country_name IN VARCHAR2,
-        out_country_reg_curr OUT country_reg_curr
+        out_country_reg_curr OUT country_reg_curr_info
         ) IS 
         -- The record is populated with the data from select statement
         BEGIN
@@ -115,7 +115,7 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     -- Procedure no. 3
     PROCEDURE countries_in_region(
         in_region_name IN VARCHAR2,
-        out_country_info OUT country_reg_curr_table
+        out_country_info OUT country_reg_curr_arr
         ) IS 
     
         -- The cursor is a query that returns a result set, which is a collection of rows
@@ -150,18 +150,18 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
 
     -- Procedure no. 4
     PROCEDURE print_region_array(
-        in_country_reg_curr_table country_reg_curr_table
+        in_country_reg_curr_arr country_reg_curr_arr
         ) IS 
 
     BEGIN 
         -- The associative array is iterated over and the rows are printed
-        FOR i IN in_country_reg_curr_table.FIRST..in_country_reg_curr_table.LAST 
+        FOR i IN in_country_reg_curr_arr.FIRST..in_country_reg_curr_arr.LAST 
         LOOP DBMS_OUTPUT.PUT_LINE(
-            in_country_reg_curr_table(i).country_name || 
+            in_country_reg_curr_arr(i).country_name || 
             ', ' || 
-            in_country_reg_curr_table(i).region || 
+            in_country_reg_curr_arr(i).region || 
             ', ' || 
-            in_country_reg_curr_table(i).currency
+            in_country_reg_curr_arr(i).currency
         );
         END LOOP;
 
@@ -174,7 +174,7 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     -- Procedure no. 5
     PROCEDURE country_languages(
         in_country_name IN VARCHAR2,
-        out_country_langs OUT country_languages_arr
+        out_country_langs OUT country_lang_arr
     ) IS 
     
         -- Using a cursor, fetch data from the database
@@ -204,7 +204,7 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     END;
     
     -- Procedure no. 6
-    PROCEDURE print_language_array(country_languages country_languages_arr) IS 
+    PROCEDURE print_language_array(country_languages country_lang_arr) IS 
         BEGIN 
             FOR i IN country_languages.FIRST..country_languages.LAST 
             LOOP 
