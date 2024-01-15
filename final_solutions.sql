@@ -172,13 +172,12 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     END;
 
     -- Procedure no. 5
-    -- Create a procedure country_languages to fetch and return all the spoken language(s) and the official language(s) for a country.
     PROCEDURE country_languages(
         in_country_name IN VARCHAR2,
         out_country_langs OUT country_languages_arr
     ) IS 
     
-        -- Using a cursor, fetch the spoken language(s) and the official language(s) for a country.
+        -- Using a cursor, fetch data from the database
         CURSOR country_languages_cursor IS
         SELECT countries.country_name,
             languages.language_name,
@@ -255,7 +254,6 @@ END traveler_admin_package;
 CREATE OR REPLACE PACKAGE BODY traveler_admin_package AS
 
     -- Procedure no. 7
-    -- Display all disabled triggers in the database
     PROCEDURE display_disabled_triggers IS
         BEGIN
             FOR trigger_rec IN (
