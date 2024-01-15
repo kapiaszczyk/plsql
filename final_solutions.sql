@@ -1,8 +1,4 @@
 ---------------------------------------------------------------------------
--------------------- Karolina Piaszczyk & Anna Miłek  ---------------------
----------------------------------------------------------------------------
-
----------------------------------------------------------------------------
 ----------------------- The first package specification -------------------
 ---------------------------------------------------------------------------
 CREATE OR REPLACE PACKAGE traveler_assistance_package AS 
@@ -24,7 +20,7 @@ CREATE OR REPLACE PACKAGE traveler_assistance_package AS
         currency currencies.currency_name %TYPE
     );
 
-    -- ???
+    -- Definition of a record for the array of records
     TYPE country_language_info IS RECORD (
         country_name countries.country_name %TYPE,
         language_name languages.language_name %TYPE,
@@ -180,7 +176,7 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     PROCEDURE country_languages(
         in_country_name IN VARCHAR2,
         out_country_langs OUT country_languages_arr
-        ) IS 
+    ) IS 
     
         -- Using a cursor, fetch the spoken language(s) and the official language(s) for a country.
         CURSOR country_languages_cursor IS
@@ -193,25 +189,21 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
         WHERE Lower(countries.country_name) = Lower(in_country_name)
             AND countries.country_id = spokenlang.country_id
             AND spokenlang.language_id = languages.language_id;
-        
+    
         i PLS_INTEGER := 1;
-
-        BEGIN 
-            FOR country_language 
-            IN country_languages_cursor 
-            -- Assign the cursor data to a index of the array
-            LOOP out_country_langs(i) := country_language_info;
+    
+    BEGIN 
+        FOR country_language IN country_languages_cursor LOOP
+            -- Assign the cursor data to an index of the array
+            out_country_langs(i) := country_language;
             i := i + 1;
         END LOOP;
-
+    
         EXCEPTION
-        WHEN NO_DATA_FOUND THEN RAISE_APPLICATION_ERROR(
-            -20001,
-            in_country_name || ' not found in the database.'
-        );
-
+        WHEN NO_DATA_FOUND THEN 
+            RAISE_APPLICATION_ERROR(-20001, in_country_name || ' not found in the database.');
     END;
-
+    
     -- Procedure no. 6
     PROCEDURE print_language_array(country_languages country_languages_arr) IS 
         BEGIN 
@@ -227,10 +219,9 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
             END LOOP;
 
         EXCEPTION
-        WHEN NO_DATA_FOUND THEN RAISE_APPLICATION_ERROR(
-            -20001,
-            country_name || ' not found in the database.'
-        );
+            WHEN OTHERS THEN
+                -- SQLERRM returns error message associated with the lastest executet statement
+                DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
     END;
 
 END;
