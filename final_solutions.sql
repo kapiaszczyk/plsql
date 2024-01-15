@@ -225,6 +225,7 @@ CREATE OR REPLACE PACKAGE BODY traveler_assistance_package AS
     END;
 
 END;
+/
 
 ---------------------------------------------------------------------------
 ---------------------- The second package specification -------------------
@@ -333,3 +334,4 @@ CREATE OR REPLACE PACKAGE BODY traveler_admin_package AS
         END;
 
 END;
+/
