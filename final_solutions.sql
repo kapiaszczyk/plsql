@@ -27,10 +27,10 @@ CREATE OR REPLACE PACKAGE traveler_assistance_package AS
         official_language spoken_languages.official %TYPE
     );
 
-    -- Defining an array type for the third procedure, associative array of records 
+    -- Defining an array type for the third and fourth procedure
     TYPE country_reg_curr_table IS TABLE OF country_reg_curr INDEX BY PLS_INTEGER;
 
-    -- Defining a record type for the fifth procedure
+    -- Defining an array type for the fifth and sixth procedure
     TYPE country_languages_arr IS TABLE OF country_language_info INDEX BY PLS_INTEGER;
 
     -- Declaring the procedures
@@ -232,6 +232,7 @@ END;
 
 CREATE OR REPLACE PACKAGE traveler_admin_package AS
 
+    -- Definition of a record for the seventh procedure
     TYPE object_info IS RECORD(
         name USER_DEPENDENCIES.name%TYPE,
         type USER_DEPENDENCIES.type%TYPE,
@@ -239,6 +240,7 @@ CREATE OR REPLACE PACKAGE traveler_admin_package AS
         referenced_type USER_DEPENDENCIES.referenced_type%TYPE
     );
 
+    -- Defining an array type for the eighth and ninth procedure
     TYPE object_arr IS TABLE OF object_info INDEX BY PLS_INTEGER;
 
     PROCEDURE display_disabled_triggers;
