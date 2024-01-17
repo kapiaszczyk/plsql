@@ -67,6 +67,20 @@ AS
       FROM   countries
       -- This way the search is not case sensitive
       WHERE  Lower(country_name) = Lower(in_country_name);
+
+      -- For testing purposes
+      dbms_output.Put_line(out_country_info.country_name
+                           || ', '
+                           || out_country_info.location
+                           || ', '
+                           || out_country_info.capitol
+                           || ', '
+                           || out_country_info.population
+                           || ', '
+                           || out_country_info.airports
+                           || ', '
+                           || out_country_info.climate);
+
   -- Exception in case the given country is not found in the database
   EXCEPTION
     WHEN no_data_found THEN
@@ -91,6 +105,15 @@ AS
       WHERE  Lower(countries.country_name) = Lower(in_country_name)
              AND countries.region_id = regions.region_id
              AND countries.currency_code = currencies.currency_code;
+
+      -- For testing purposes
+
+      dbms_output.Put_line(out_country_reg_curr.country_name
+                           || ', '
+                           || out_country_reg_curr.region
+                           || ', '
+                           || out_country_reg_curr.currency);
+
   EXCEPTION
     WHEN no_data_found THEN
                Raise_application_error(-20001, in_country_name
@@ -164,6 +187,12 @@ AS
       FOR country_language IN country_languages_cursor LOOP
           -- Assign the cursor data to an index of the array
           Out_country_langs(i) := country_language;
+          -- For testing purposes print the data
+          dbms_output.Put_line(Out_country_langs(i).country_name
+                               || ', '
+                               || Out_country_langs(i).language_name
+                               || ', '
+                               || Out_country_langs(i).official_language);
 
           i := i + 1;
       END LOOP;
@@ -236,6 +265,11 @@ AS
                                || ' '
                                || trigger_rec.status);
       END LOOP;
+
+      -- If no data found db.m_output will print the message
+      IF SQL%NOTFOUND THEN
+        Raise_application_error(-20001, 'No data found');
+      END IF;
   END;
   -- Procedure no. 8
   FUNCTION All_dependent_objects(object_name VARCHAR2)
@@ -269,18 +303,16 @@ AS
                                     || SQLERRM);
   END;
   -- -- Procedure no. 9
-  PROCEDURE Print_dependent_objects(objects IN OBJECT_ARR)
+  PROCEDURE print_dependent_objects(objects IN OBJECT_ARR)
   IS
   BEGIN
       FOR i IN objects.first .. objects.last LOOP
-          dbms_output.Put_line('Name: '
-                               || Rpad(Objects(i).name, 31)
-                               || 'Type: '
-                               || Rpad(Objects(i).TYPE, 31)
-                               || 'Referenced name: '
-                               || Rpad(Objects(i).referenced_name, 31)
-                               || 'Referenced type: '
-                               || Rpad(Objects(i).referenced_type, 31));
+        DBMS_OUTPUT.PUT_LINE(
+          'Name: ' || objects(i).name ||
+          ', Type: ' || objects(i).TYPE ||
+          ', Referenced Name: ' || objects(i).referenced_name ||
+          ', Referenced Type: ' || objects(i).referenced_type
+        );
       END LOOP;
   EXCEPTION
     WHEN OTHERS THEN
